@@ -1,0 +1,7 @@
+{
+	"name": "MoveOrDie",
+	"version": "0.0.1",
+	"author": "ebe1.kenobi",
+	"description": "The player must move or he dies",
+	"dll": "TFModFortRiseVariantMoveOrDie.dll"
+}
