@@ -5,7 +5,7 @@ namespace TFModFortRiseVariantMoveOrDie
 {
   public class TFModFortRiseVariantMoveOrDieSettings : ModuleSettings
   {
-    [SettingsName("Activated")]
+    [SettingsName("Variant activated even \n\nwhen variant is not selected")]
     public bool activated = false;
 
     [SettingsName("StationaryDeathTime")]
