@@ -18,6 +18,10 @@ Data and log files live in `<TowerFall>/FortRise/Saves/MoveOrDie/` and `<TowerFa
 Tick the **MoveOrDie** variant on the versus variants screen, or turn on the
 "Pickup activated even when variant is not selected" setting.
 
+Press the **left upper shoulder** (Alt2) on that variant to open the mod's settings
+right there, without leaving the variants screen. Whatever you change is written to
+disk when the window closes.
+
 > All my mods declare the same `Header` (`EBE1 MODS`), so their variants are
 > grouped into a **single column** of the variants screen instead of one column
 > per mod.

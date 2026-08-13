@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using FortRise;
 using System;
@@ -21,6 +21,7 @@ namespace TFModFortRiseVariantMoveOrDie
     ];
     internal Type[] Hookables = [
         typeof(MyPlayer),
+        typeof(MyVariantToggle),
     ];
 
     public static TFModFortRiseVariantMoveOrDieSettings Settings => Instance.GetSettings<TFModFortRiseVariantMoveOrDieSettings>()!;
@@ -32,7 +33,7 @@ namespace TFModFortRiseVariantMoveOrDie
         //Debugger.Launch(); // Proposera d’attacher Visual Studio
       }
       Instance = this;
-      //Logger.Init("TFModFortRiseVariantMoveOrDieModuleLog");
+      TFModFortRiseVariantMoveOrDie.Logger.Init(logger);
 
 
       foreach (var hookable in Hookables)
@@ -43,6 +44,32 @@ namespace TFModFortRiseVariantMoveOrDie
       foreach (var registerable in Registerables)
       {
         registerable.GetMethod(nameof(IRegisterable.Register))!.Invoke(null, [content, context.Registry]);
+      }
+    }
+
+    /// <summary>
+    /// Ecrit les reglages sur le disque tout de suite.
+    ///
+    /// FortRise ne les enregistre qu'en sortant de SON ecran d'options : un reglage
+    /// change depuis la fenetre de la variante ne vivrait qu'en memoire et serait
+    /// perdu en quittant. SaveSettings est internal cote FortRise, d'ou la reflexion.
+    /// </summary>
+    public static void SaveSettingsNow()
+    {
+      if (Instance == null)
+      {
+        return;
+      }
+
+      try
+      {
+        var method = typeof(Mod).GetMethod("SaveSettings",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        method?.Invoke(Instance, null);
+      }
+      catch (Exception e)
+      {
+        TFModFortRiseVariantMoveOrDie.Logger.Info($"[Settings] sauvegarde immediate impossible : {e.Message}");
       }
     }
 
