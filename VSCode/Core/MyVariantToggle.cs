@@ -30,12 +30,64 @@ namespace TFModFortRiseVariantMoveOrDie
       );
     }
 
-    /// <summary>Est-ce NOTRE case ? Le libelle est le seul repere fiable ici.</summary>
+    /// <summary>
+    /// Est-ce NOTRE case ?
+    ///
+    /// La comparaison etait une egalite EXACTE avec le libelle enregistre, et elle
+    /// echouait sans rien dire : le titre affiche ne revient pas toujours tel qu'on
+    /// l'a pose - casse changee, espaces - et une case dont le libelle ne tombe pas au
+    /// caractere pres n'ouvrait tout simplement jamais sa fenetre. Un seul des mods y
+    /// arrivait, ce qui est le pire des cas : le mecanisme avait l'air bon.
+    ///
+    /// On compare donc sans tenir compte de la casse ni des espaces, et contre le
+    /// LIBELLE comme contre le NOM d'enregistrement - les deux ne sont pas forcement
+    /// identiques (Speed s'enregistre "Speed" et s'affiche "SPEED").
+    /// </summary>
     private static bool IsOurs(VariantToggle toggle)
     {
-      return toggle != null
-          && toggle.Variant != null
-          && string.Equals(toggle.Variant.Title, Variants.TITLE, StringComparison.Ordinal);
+      string shown = toggle?.Variant?.Title;
+
+      if (string.IsNullOrEmpty(shown))
+      {
+        return false;
+      }
+
+      return Same(shown, Variants.TITLE) || Same(shown, Variants.MoveOrDie?.Name);
+    }
+
+    /// <summary>
+    /// Les libelles deja vus, pour ne tracer qu'une fois chacun. Le survol appelle
+    /// OnSelect a chaque passage du curseur : sans ce garde, le journal se remplirait.
+    /// </summary>
+    private static readonly System.Collections.Generic.HashSet<string> traced =
+        new System.Collections.Generic.HashSet<string>();
+
+    /// <summary>
+    /// Note ce que le jeu affiche reellement sur une case, et si on s'y reconnait.
+    /// C'est ce qui manquait pour comprendre pourquoi la fenetre ne s'ouvrait pas :
+    /// l'echec etait muet.
+    /// </summary>
+    private static void Trace(VariantToggle toggle)
+    {
+      string shown = toggle?.Variant?.Title;
+
+      if (string.IsNullOrEmpty(shown) || !traced.Add(shown))
+      {
+        return;
+      }
+
+      Logger.Info($"[Variants] case '{shown}' - a nous : {IsOurs(toggle)}");
+    }
+
+    private static bool Same(string shown, string mine)
+    {
+      if (string.IsNullOrEmpty(mine))
+      {
+        return false;
+      }
+
+      return string.Equals(shown.Replace(" ", ""), mine.Replace(" ", ""),
+          StringComparison.OrdinalIgnoreCase);
     }
 
     public static void Update_patch(VariantToggle __instance)
@@ -92,6 +144,8 @@ namespace TFModFortRiseVariantMoveOrDie
     {
       try
       {
+        Trace(__instance);
+
         if (!IsOurs(__instance))
         {
           return;

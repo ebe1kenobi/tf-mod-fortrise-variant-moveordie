@@ -42,8 +42,12 @@ namespace TFModFortRiseVariantMoveOrDie
     private readonly List<Field> fields;
     private readonly string title;
 
-    private readonly Vector2 tweenFrom;
-    private readonly Vector2 tweenTo;
+    /// <summary>Ou l'on veut la fenetre A L'ECRAN, camera deduite.</summary>
+    private readonly Vector2 screenAnchor;
+
+    /// <summary>Decalage horizontal restant de l'animation d'entree, en pixels.</summary>
+    private float slide;
+
     private readonly Wiggler wiggler;
 
     private int selected;
@@ -58,8 +62,12 @@ namespace TFModFortRiseVariantMoveOrDie
       this.title = title;
       this.fields = fields;
 
-      tweenTo = Position;
-      tweenFrom = Position + new Vector2(320f, 0f);
+      // La position demandee est celle qu'on veut A L'ECRAN, pas dans le monde.
+      screenAnchor = position;
+
+      // L'entree se fait par la droite : on anime un DECALAGE, pas une position
+      // absolue, pour que l'ancrage sur la camera reste vrai pendant le glissement.
+      slide = 320f;
 
       wiggler = Wiggler.Create(20, 5f, null, null, false, false);
       Add(wiggler);
@@ -128,9 +136,47 @@ namespace TFModFortRiseVariantMoveOrDie
       return shown;
     }
 
+    /// <summary>
+    /// Recale la fenetre sur la camera.
+    ///
+    /// Elle vit sur la couche -1, celle qui porte une camera, et l'ecran des variantes
+    /// FAIT DEFILER cette camera. Une position absolue restait donc la ou la liste se
+    /// trouvait a l'ouverture : des qu'on avait descendu dans la liste, la fenetre se
+    /// dessinait au-dessus du champ visible - creee, ajoutee, rendue, et invisible.
+    ///
+    /// On la repose donc a chaque image, en coordonnees d'ECRAN.
+    /// </summary>
+    /// <summary>
+    /// Le texte tel qu'on l'affiche : en majuscules, comme tout le reste des menus du
+    /// jeu.
+    ///
+    /// La mise en forme est faite ICI et jamais sur la valeur enregistree. Les
+    /// reglages sont compares a des chaines exactes - `periodicity == "Normal"`, un
+    /// identifiant de pouvoir - et les mettre en majuscules a la source casserait ces
+    /// comparaisons sans qu'on voie pourquoi.
+    /// </summary>
+    private static string Caps(string text)
+    {
+      return string.IsNullOrEmpty(text) ? text : text.ToUpperInvariant();
+    }
+
+    private void Anchor()
+    {
+      Vector2 camera = Vector2.Zero;
+
+      if (MainMenu != null && MainMenu.UILayer != null && MainMenu.UILayer.Camera != null)
+      {
+        camera = MainMenu.UILayer.Camera.Position;
+      }
+
+      Position = camera + screenAnchor + new Vector2(slide, 0f);
+    }
+
     public override void Added()
     {
       base.Added();
+
+      Anchor();
 
       // Le bouton retour doit refermer la FENETRE et non quitter l'ecran des
       // variantes : c'est ce que fait le jeu pour sa fenetre des joueurs.
@@ -146,6 +192,7 @@ namespace TFModFortRiseVariantMoveOrDie
     public override void Update()
     {
       base.Update();
+      Anchor();
 
       if (!Selected)
       {
@@ -203,11 +250,12 @@ namespace TFModFortRiseVariantMoveOrDie
     public override void Render()
     {
       base.Render();
+      Anchor();
 
       float height = PanelHeight;
       MenuPanel.DrawPanel(X - PanelWidth / 2f, Y - height / 2f, PanelWidth, height);
 
-      Draw.TextCentered(TFGame.Font, title, Position + new Vector2(0f, -height / 2f + 10f), Color.White);
+      Draw.TextCentered(TFGame.Font, Caps(title), Position + new Vector2(0f, -height / 2f + 10f), Color.White);
 
       List<Field> shown = Visible();
       float y = Y - height / 2f + TopPadding;
@@ -217,12 +265,12 @@ namespace TFModFortRiseVariantMoveOrDie
         bool active = i == selected;
         Color color = active ? VariantItem.ActiveSelection : Color.Gray;
 
-        Draw.OutlineTextJustify(TFGame.Font, shown[i].Label,
+        Draw.OutlineTextJustify(TFGame.Font, Caps(shown[i].Label),
             new Vector2(X - PanelWidth / 2f + 10f, y), color, Color.Black, new Vector2(0f, 0.5f), 1f);
 
         // La valeur est cadree a droite : les lignes ne font pas la meme longueur, et
         // une colonne alignee se lit d'un coup d'oeil.
-        string value = shown[i].Value();
+        string value = Caps(shown[i].Value());
         float scale = active ? 1f + wiggler.Value * 0.15f : 1f;
 
         Draw.OutlineTextJustify(TFGame.Font, value,
@@ -236,7 +284,7 @@ namespace TFModFortRiseVariantMoveOrDie
     public override void TweenIn()
     {
       Tween tween = Tween.Create(Tween.TweenMode.Oneshot, Ease.CubeOut, 20, true);
-      tween.OnUpdate = t => Position = Vector2.Lerp(tweenFrom, tweenTo, t.Eased);
+      tween.OnUpdate = t => slide = MathHelper.Lerp(320f, 0f, t.Eased);
       tween.OnComplete = t => Selected = true;
       Add(tween);
     }
@@ -250,7 +298,7 @@ namespace TFModFortRiseVariantMoveOrDie
       TFModFortRiseVariantMoveOrDieModule.SaveSettingsNow();
 
       Tween tween = Tween.Create(Tween.TweenMode.Oneshot, Ease.CubeOut, 12, true);
-      tween.OnUpdate = t => Position = Vector2.Lerp(tweenTo, tweenFrom, t.Eased);
+      tween.OnUpdate = t => slide = MathHelper.Lerp(0f, 320f, t.Eased);
       tween.OnComplete = t =>
       {
         // Rendre la main a la case d'ou l'on vient, sinon l'ecran des variantes n'a
