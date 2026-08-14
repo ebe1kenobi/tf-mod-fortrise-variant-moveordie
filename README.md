@@ -1,6 +1,6 @@
 # MoveOrDie
 
-<img width="640" height="480" alt="headhunters_231210_round_00" src="https://github.com/user-attachments/assets/77f3f114-a6cc-4c9e-8055-85a690949448" />
+<img width="640" height="400" alt="headhunters_231210_round_00" src="https://github.com/user-attachments/assets/77f3f114-a6cc-4c9e-8055-85a690949448" />
 
 
 A "move or die" variant: a player who stands still for too long dies. Both the
