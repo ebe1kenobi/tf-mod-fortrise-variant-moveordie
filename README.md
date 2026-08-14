@@ -34,6 +34,25 @@ disk when the window closes.
 | StationaryDeathTime | how long you may stand still before dying |
 | MinSpeed | speed below which you count as standing still |
 
+## Settings from the variant screen
+
+Every setting below is also reachable **without leaving the versus screen**: highlight
+this mod's variant box and press the **left upper shoulder** (`Alt2`). A small window
+opens on the settings that matter, and the button is announced in the guide at the
+bottom.
+
+Changes are written to disk immediately. FortRise only saves settings when leaving its
+own Options menu, so a value changed here - or right before quitting - used to be lost.
+
+> The window recognises its own box by the label the game *displays*, ignoring case and
+> spaces. Comparing it letter for letter with the registered name never matched: the game
+> shows variant titles in **capitals** (`BLACKHOLE` for `BlackHole`), and the failure was
+> completely silent - no sound, no message, nothing.
+>
+> It is also re-anchored on the camera every frame. Menu entities live on a layer that
+> **scrolls**, so a window placed at a fixed position stayed where the list was when it
+> opened - drawn, but above the visible area as soon as you had scrolled down.
+
 ## Build / deployment
 
 | Script | Purpose |

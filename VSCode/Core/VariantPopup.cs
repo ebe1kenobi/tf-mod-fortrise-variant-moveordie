@@ -162,14 +162,19 @@ namespace TFModFortRiseVariantMoveOrDie
 
     private void Anchor()
     {
-      Vector2 camera = Vector2.Zero;
+      float scroll = 0f;
 
       if (MainMenu != null && MainMenu.UILayer != null && MainMenu.UILayer.Camera != null)
       {
-        camera = MainMenu.UILayer.Camera.Position;
+        scroll = MainMenu.UILayer.Camera.Y;
       }
 
-      Position = camera + screenAnchor + new Vector2(slide, 0f);
+      // Le DEFILEMENT seulement, donc uniquement en Y. La camera porte aussi le
+      // recentrage horizontal de l'interface - WiderSet cale les 320 de large dans
+      // 420 - et l'ajouter en X le comptait une seconde fois : la fenetre partait
+      // cinquante pixels a gauche du milieu. Une abscisse absolue est deja centree,
+      // c'est ainsi que tout le menu du jeu est ecrit.
+      Position = new Vector2(screenAnchor.X + slide, scroll + screenAnchor.Y);
     }
 
     public override void Added()
