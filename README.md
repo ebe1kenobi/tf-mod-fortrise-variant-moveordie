@@ -15,6 +15,7 @@ Data and log files live in `<TowerFall>/FortRise/Saves/MoveOrDie/` and `<TowerFa
 
 ## Usage
 
+
 Tick the **MoveOrDie** variant on the versus variants screen, or turn on the
 "Pickup activated even when variant is not selected" setting.
 
@@ -25,6 +26,12 @@ disk when the window closes.
 > All my mods declare the same `Header` (`EBE1 MODS`), so their variants are
 > grouped into a **single column** of the variants screen instead of one column
 > per mod.
+
+<img width="675" height="317" alt="image" src="https://github.com/user-attachments/assets/2456c746-5446-49f7-977d-25cc6a70d9f9" />
+
+<img width="627" height="237" alt="image" src="https://github.com/user-attachments/assets/e4cd3b6b-7bf1-4510-bac2-8d2426651804" />
+
+<img width="819" height="471" alt="image" src="https://github.com/user-attachments/assets/b51e222e-b157-4cf4-afd2-b459c507f192" />
 
 ## Settings
 
