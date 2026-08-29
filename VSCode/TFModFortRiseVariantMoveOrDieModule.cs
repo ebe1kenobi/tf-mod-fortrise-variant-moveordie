@@ -16,7 +16,8 @@ namespace TFModFortRiseVariantMoveOrDie
 
     private static Type[] Registerables = [
         typeof(TextureRegistry),
-        typeof(Variants)
+        typeof(Variants),
+        typeof(MoveOrDieGameMode)
 
     ];
     internal Type[] Hookables = [

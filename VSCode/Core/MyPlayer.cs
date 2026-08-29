@@ -47,7 +47,12 @@ namespace TFModFortRiseVariantMoveOrDie
 
     public static void Update(Player __instance)
     {
-      if (!Variants.MoveOrDie.IsActive() && !TFModFortRiseVariantMoveOrDieModule.Settings.activated) return;
+      // Trois portes vers la meme regle : la variante cochee, le reglage global, ou le
+      // MODE de jeu. Une seule ligne les reunit, et le reste du fichier n'a pas a savoir
+      // par laquelle on est entre.
+      if (!Variants.MoveOrDie.IsActive()
+          && !TFModFortRiseVariantMoveOrDieModule.Settings.activated
+          && !MoveOrDieGameMode.IsActive(__instance.Level?.Session)) return;
       if (__instance.State == PlayerStates.Frozen) return;
       if (__instance.State == PlayerStates.Dying) return;
       if (__instance.State == PlayerStates.LedgeGrab) return;
