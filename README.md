@@ -18,9 +18,23 @@ Data and log files live in `<TowerFall>/FortRise/Saves/MoveOrDie/` and `<TowerFa
 
 ## Usage
 
+Three doors onto the same rule, and picking one is all there is to it:
 
-Tick the **MoveOrDie** variant on the versus variants screen, or turn on the
-"Pickup activated even when variant is not selected" setting.
+| Door | When to use it |
+|---|---|
+| The **MoveOrDie variant**, on the versus variants screen | add the rule to an ordinary match |
+| The **MOVE OR DIE game mode**, in the versus mode list | make it the subject of the evening |
+| The `Pickup activated even when variant is not selected` setting | leave it on permanently, whatever is ticked |
+
+The mode lives in **this** mod rather than a mod of its own. The rule is forty lines that
+already exist here; a separate mod would have had two ways to satisfy it — copy those
+forty lines, which would start diverging at the first edit, or ask this one to switch on
+over interop, which is a lot of plumbing for one boolean. A mode and a variant are not two
+features, they are two doors onto the same one.
+
+The mode has **no round logic of its own**: the rule kills archers and the last one
+standing wins, which is exactly what `LastManStandingRoundLogic` already does. Writing one
+would only have added places to get it wrong.
 
 Press the **left upper shoulder** (Alt2) on that variant to open the mod's settings
 right there, without leaving the variants screen. Whatever you change is written to
@@ -36,13 +50,25 @@ disk when the window closes.
 
 <img width="819" height="471" alt="image" src="https://github.com/user-attachments/assets/b51e222e-b157-4cf4-afd2-b459c507f192" />
 
+## What counts as standing still
+
+The timer runs while your speed sits under the threshold, and resets the moment it does
+not. **Halfway to the deadline the archer starts flashing** — the warning has to arrive
+while there is still time to act on it, not as an epitaph. Running out kills by
+`DeathCause.Curse`, and the timer restarts.
+
+Three states are exempt, and each for its own reason: `Frozen`, so the pre-round countdown
+does not kill anybody before the round has begun; `Dying`, so a death already under way is
+not counted twice; and `LedgeGrab`, because hanging off a ledge is a hold the game itself
+offers — punishing it would be punishing a move rather than a refusal to move.
+
 ## Settings
 
 | Setting | Purpose |
 |---------|---------|
 | Pickup activated even when variant is not selected | apply the effect even when the variant is unticked |
-| StationaryDeathTime | how long you may stand still before dying |
-| MinSpeed | speed below which you count as standing still |
+| StationaryDeathTime | seconds you may stand still before dying (1-5) |
+| MinSpeed | speed below which you count as standing still (1-5) |
 
 ## Settings from the variant screen
 
