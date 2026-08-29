@@ -1,5 +1,7 @@
 # MoveOrDie
 
+<img width="640" height="400" alt="image" src="https://github.com/user-attachments/assets/d6028bb6-656d-4e3d-8525-c9b965bb22be" />
+
 <img width="640" height="400" alt="headhunters_231210_round_00" src="https://github.com/user-attachments/assets/77f3f114-a6cc-4c9e-8055-85a690949448" />
 
 
